@@ -1,50 +1,30 @@
 import React, { useState, useEffect } from 'react';
 
 function CountdownTimer() {
-  const [duration, setDuration] = useState(0);
-  const [time, setTime] = useState(duration);
-  const [isRunning, setIsRunning] = useState(false);
+  const [time, setTime] = useState(300);
 
   useEffect(() => {
-    let countdown;
-
-    if (isRunning && time > 0) {
-      countdown = setInterval(() => {
-        setTime((prevTime) => prevTime - 1);
-      }, 1000);
-    } else if (time === 0) {
-      clearInterval(countdown);
-    }
+    const countdown = setInterval(() => {
+      if (time > 0) {
+        setTime(time - 1);
+      } else {
+        clearInterval(countdown);
+        // You can add code here to handle when the countdown reaches zero.
+      }
+    }, 1000); // Update the timer every second
 
     return () => {
-      clearInterval(countdown);
+      clearInterval(countdown); // Cleanup the interval on component unmount
     };
-  }, [isRunning, time]);
+  }, [time]);
 
-  const startCountdown = () => {
-    if (duration > 0) {
-      setIsRunning(true);
-      setTime(duration);
-    }
-  };
-
-  const stopCountdown = () => {
-    setIsRunning(false);
-  };
+  const minutes = Math.floor(time / 60);
+  const seconds = time % 60;
 
   return (
     <div>
-      <div>
-        <input
-          type="number"
-          placeholder="Enter duration (seconds)"
-          value={duration}
-          onChange={(e) => setDuration(parseInt(e.target.value))}
-        />
-        <button onClick={startCountdown}>Start</button>
-        <button onClick={stopCountdown}>Stop</button>
-      </div>
-      <p>Countdown Timer: {time} seconds</p>
+      <p>Countdown Timer:</p>
+      <p>{`${minutes}:${seconds < 10 ? '0' : ''}${seconds}`}</p>
     </div>
   );
 }
